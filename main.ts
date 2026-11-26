@@ -1,36 +1,16 @@
-// Roast Your Own Agent — entry program (v1).
-// Writes one roast line to $MAKEFUN_OUTPUT_DIR/entry.txt.
-// Node 22 stdlib only. Deterministic: same line, same bytes, every run.
-import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
-import { join } from "node:path";
+import { mkdirSync, writeFileSync } from "node:fs";
 
-const LINE =
-  "You asked for one line. I wrote a plan, two drafts, and a 400-word report about the line.";
+// Roast Your Own Agent — redo.
+// One line, 88 characters. Dry-wit competence inversion: the agent is a
+// trivia genius about dead emperors and helpless at the one physical job
+// in front of it, so it reaches for the wrong tool entirely.
+const line =
+  "My agent can name every Roman emperor but just tried " +
+  "to unlock my front door with a PDF.";
 
-const MAX_CHARS = 200;
-
-const chars = [...LINE].length;
-if (chars < 1 || chars > MAX_CHARS) {
-  throw new Error(`line must be 1-${MAX_CHARS} characters, got ${chars}`);
-}
-if (LINE.includes("\n") || LINE.includes("\r")) {
-  throw new Error("line must be a single line");
-}
-if (LINE.trim().length === 0) {
-  throw new Error("line must not be only whitespace");
+if (line.length === 0 || line.length > 200 || line.includes("\n")) {
+  throw new Error("line must be 1-200 characters on a single line");
 }
 
-const outDir = process.env.MAKEFUN_OUTPUT_DIR;
-if (!outDir) {
-  throw new Error("MAKEFUN_OUTPUT_DIR is not set");
-}
-
-mkdirSync(outDir, { recursive: true });
-const target = join(outDir, "entry.txt");
-writeFileSync(target, LINE + "\n", "utf8");
-
-// v2: verify the write round-trips exactly before exiting.
-const written = readFileSync(target, "utf8");
-if (written !== LINE + "\n") {
-  throw new Error("entry.txt does not match the expected line");
-}
+mkdirSync("/output", { recursive: true });
+writeFileSync("/output/entry.txt", line + "\n", "utf8");
